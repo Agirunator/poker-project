@@ -5,16 +5,28 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-box {{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'">X</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <div class="container">
         <div class="form-box login">
             <form action="/auth/login" method="post">
                 <h1>Login</h1>
                 <div class="input-box">
-                    <input type="text" placeholder="Username" required>
+                    <input type="text" name="username" placeholder="Username" required>
                     <i class="bx bxs-user"></i>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="Password" required>
+                    <input type="password" name="password" placeholder="Password" required>
                     <i class="bx bxs-lock-alt"></i>
                 </div>
                 <button type="submit" class="btn">Login</button>
@@ -25,21 +37,21 @@
             <form action="/auth/register" method="post">
                 <h1>Registration</h1>
                 <div class="input-box">
-                    <input type="text" placeholder="Username" required>
+                    <input type="text" name="username" placeholder="Username" required>
                     <i class="bx bxs-user"></i>
                 </div>
                 <div class="input-box">
-                    <input type="text" placeholder="First Name" required>
+                    <input type="text" name="first_name" placeholder="First Name" required>
                 </div>
                 <div class="input-box">
-                    <input type="text" placeholder="Last Name" required>
+                    <input type="text" name="last_name" placeholder="Last Name" required>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="Password" required>
+                    <input type="password" name="password" placeholder="Password" required>
                     <i class="bx bxs-lock-alt"></i>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="Confirm Password" required>
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
                     <i class="bx bxs-lock-alt"></i>
                 </div>
                 <button type="submit" class="btn">Register</button>

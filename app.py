@@ -9,7 +9,7 @@ def is_alphanumeric(s):
     return bool(re.match('^[a-zA-Z0-9]*$', s))
 
 app = Flask(__name__)
-app.secret_key = "secret_key"
+app.secret_key = "b'a\x01\xe0I\x1dB\xd6\x1cGb\xc0:\xe4X\x8fV\xf2\xfb\xb9\xdf\xc0Ld\xbf\x0b<\xf8}-\xa1G\xce'"
 
 def get_db_connection():
     conn = sqlite3.connect("users.db")

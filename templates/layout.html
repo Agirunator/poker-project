@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Poker: {% block title %}{% endblock %}</title>
+        <title>TheAnte: {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="static/css/styles.css">
         <script type="text/javascript" src="static/js/darkmode.js" defer></script>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -13,6 +13,7 @@
         <header>
             <nav>
                 <ul>
+                    <img src="static/images/TheAnte_logo.png" alt="logo">
                     <li class="home-li"><a href="/" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>
                     {% if current_user.is_authenticated %}
                         <li><a class="accent-link" href="/logout" class="{% if request.path == '/logout' %}active-link{% endif %}">Log Out</a></li>

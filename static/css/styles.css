@@ -1,3 +1,4 @@
+/* default styles and dark mode toggle */
 :root{
     --base-color: white;
     --base-variant: #e8e9ed;
@@ -86,8 +87,53 @@
     display: block;
   }
 
+/* Navigation */
+
+nav {
+  background-color: var(--base-color);
+  border-bottom: 1px solid var(--base-shadow);
+}
+  
+nav ul {
+  list-style: none;
+  display: flex;
+}
+
+nav li {
+  display: flex;
+}
+
+nav .home-li {
+  margin-right: auto;
+}
+
+nav a {
+  display: flex;
+  text-decoration: none;
+  color: var(--text-color);
+  padding: 1em 2em;
+  transition: background-color .15s ease;
+}
+
+nav a:hover {
+  background-color: var(--base-variant);
+}
+
+nav a.active-link {
+  border-bottom: 3px solid var(--primary-color);
+  z-index: 5;
+}
+
+nav a.accent-link {
+  background-color: var(--accent-color);
+}
+
+/* auth */
+
 .container {
   position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   width: 850px;
   height: 550px;
   background-color: var(--base-color);
@@ -275,43 +321,4 @@ form {
   padding: 0;
   margin-left: 10px;
   align-self: center;
-}
-
-nav {
-  background-color: var(--base-color);
-  border-bottom: 1px solid var(--base-shadow);
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-}
-
-nav li {
-  display: flex;
-}
-
-nav .home-li {
-  margin-right: auto;
-}
-
-nav a {
-  display: flex;
-  text-decoration: none;
-  color: var(--text-color);
-  padding: 1em 2em;
-  transition: background-color .15s ease;
-}
-
-nav a:hover {
-  background-color: var(--base-variant);
-}
-
-nav a.active-link {
-  border-bottom: 3px solid var(--primary-color);
-  z-index: 5;
-}
-
-nav a.accent-link {
-  background-color: var(--accent-color);
 }

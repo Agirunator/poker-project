@@ -19,6 +19,7 @@
   *{
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
   html{
     font-family: Poppins;
@@ -28,7 +29,14 @@
     background-color: var(--base-color);
     color: var(--text-color);
   }
-  header, section{
+  header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it's above other elements */
+  }
+  main, section{
     padding: 70px min(50px, 7%);
   }
   section{
@@ -62,7 +70,7 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 20px;
+    top: 60px; /* Adjust as needed for position with mode toggle */
     right: 20px;
   }
   #theme-switch svg{
@@ -267,4 +275,43 @@ form {
   padding: 0;
   margin-left: 10px;
   align-self: center;
+}
+
+nav {
+  background-color: var(--base-color);
+  border-bottom: 1px solid var(--base-shadow);
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+}
+
+nav li {
+  display: flex;
+}
+
+nav .home-li {
+  margin-right: auto;
+}
+
+nav a {
+  display: flex;
+  text-decoration: none;
+  color: var(--text-color);
+  padding: 1em 2em;
+  transition: background-color .15s ease;
+}
+
+nav a:hover {
+  background-color: var(--base-variant);
+}
+
+nav a.active-link {
+  border-bottom: 3px solid var(--primary-color);
+  z-index: 5;
+}
+
+nav a.accent-link {
+  background-color: var(--accent-color);
 }

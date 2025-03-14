@@ -29,6 +29,7 @@
     min-height: 100vh;
     background-color: var(--base-color);
     color: var(--text-color);
+    transition: all 1.2s ease-in-out;
   }
   header{
     position: fixed;
@@ -39,6 +40,7 @@
   }
   main, section{
     padding: 70px min(50px, 7%);
+    transition: all 1.2s ease-in-out;
   }
   section{
     background-color: var(--base-variant);
@@ -92,6 +94,7 @@
 nav {
   background-color: var(--base-color);
   border-bottom: 1px solid var(--base-shadow);
+  transition: all 1.2s ease-in-out;
 }
   
 nav ul {

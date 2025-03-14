@@ -10,7 +10,7 @@ def is_alphanumeric(s):
     return bool(re.match('^[a-zA-Z0-9]*$', s))
 
 def get_db_connection():
-    conn = sqlite3.connect("users.db")
+    conn = sqlite3.connect("user_data.db")
     conn.row_factory = sqlite3.Row
     return conn
 

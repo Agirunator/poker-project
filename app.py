@@ -63,7 +63,7 @@ def login():
     if bcrypt.checkpw(password.encode('utf-8'), stored_password):
         user = User(id=db_user['id'], username=db_user['username'])
         login_user(user)
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     
     flash("Invalid username or password", "error")
     return redirect(url_for('auth'))
@@ -107,3 +107,8 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/home')
+@login_required
+def home():
+    return render_template('home.html')

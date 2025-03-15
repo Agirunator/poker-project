@@ -13,7 +13,7 @@
         <header>
             <nav>
                 <ul>
-                    <img src="static/images/TheAnte_logo.png" alt="logo">
+                    <img src="static/images/TheAnte_logo.png" alt="logo" id="logo">
                     {% if current_user.is_authenticated %}
                         <li class="home-li"><a href="/home" class="{% if request.path == '/home' %}active-link{% endif %}">Home</a></li>
                         <li><a class="accent-link" href="/logout" class="{% if request.path == '/logout' %}active-link{% endif %}">Log Out</a></li>

@@ -73,7 +73,7 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 60px; /* Adjust as needed for position with mode toggle */
+    top: 65px; /* Adjust as needed for position with mode toggle */
     right: 20px;
   }
   #theme-switch svg{
@@ -389,4 +389,70 @@ form {
   padding: 0;
   margin-left: 10px;
   align-self: center;
+}
+
+/* home page */
+
+.dashboard {
+  display: flex;
+  gap: 30px; /* space between boxes */
+  width: 90%;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.box {
+  position: relative;
+  width: 30vw;
+  height: 300px;
+  background: var(--base-variant);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--base-shadow);
+  overflow: hidden;
+  transition: width .6s ease-in-out, transform .6s ease-in-out;
+}
+
+.box:hover {
+  width: 35vw;
+  transform: scale(1.05);
+}
+
+.box-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+}
+
+.gradient {
+  height: 150%;
+  width: 100%;
+  background-image: linear-gradient(to top, #1a1a1a, transparent);
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+}
+
+
+.description {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: var(--text-color);
+  z-index: 2;
+  padding: 10px;
+  text-shadow: 1px 1px 2px rgba(var(--secondary-text), 0.5);
+}
+
+.description h3 {
+  margin-bottom: 5px;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.description p {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #a4a5b8;
 }

@@ -21,17 +21,18 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 class User(UserMixin):
-    def __init__(self, id, username):
+    def __init__(self, id, username, first_name):
         self.id = id
         self.username = username
+        self.first_name = first_name
 
 @login_manager.user_loader
 def load_user(user_id):
     db = get_db_connection()
-    user_data = db.execute("SELECT id, username FROM users WHERE id = ?", (user_id,)).fetchone()
+    user_data = db.execute("SELECT id, username, first_name FROM users WHERE id = ?", (user_id,)).fetchone()
     db.close()
     if user_data:
-        return User(id=user_data['id'], username=user_data['username'])
+        return User(id=user_data['id'], username=user_data['username'], first_name=user_data['first_name'])
     return None
 
 @app.route('/')
@@ -61,7 +62,7 @@ def login():
     stored_password = db_user['password']
 
     if bcrypt.checkpw(password.encode('utf-8'), stored_password):
-        user = User(id=db_user['id'], username=db_user['username'])
+        user = User(id=db_user['id'], username=db_user['username'], first_name=db_user['first_name'])
         login_user(user)
         return redirect(url_for('home'))
     
@@ -112,3 +113,16 @@ def logout():
 @login_required
 def home():
     return render_template('home.html')
+
+@app.route('/rules')
+def rules():
+    return render_template('rules.html')
+
+@app.route('/game')
+def game():
+    return render_template('game.html')
+
+@app.route('/money')
+def money():
+    return render_template('money.html')
+# add tabele for money and implement transactions

@@ -16,9 +16,11 @@
                     <img src="static/images/TheAnte_logo.png" alt="logo" id="logo">
                     {% if current_user.is_authenticated %}
                         <li class="home-li"><a href="/home" class="{% if request.path == '/home' %}active-link{% endif %}">Home</a></li>
+                        <li><a href="/rules" class="{% if request.path == '/rules' %}active-link{% endif %}">Rules</a></li>
                         <li><a class="accent-link" href="/logout" class="{% if request.path == '/logout' %}active-link{% endif %}">Log Out</a></li>
                     {% else %}
                         <li class="home-li"><a href="/" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>
+                        <li><a href="/rules" class="{% if request.path == '/rules' %}active-link{% endif %}">Rules</a></li>
                         <li><a class="accent-link" href="/auth" class="{% if request.path == '/auth' %}active-link{% endif %}">Log In</a></li>
                     {% endif %}
                 </ul>

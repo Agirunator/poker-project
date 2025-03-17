@@ -17,6 +17,8 @@
                     {% if current_user.is_authenticated %}
                         <li class="home-li"><a href="/home" class="{% if request.path == '/home' %}active-link{% endif %}">Home</a></li>
                         <li><a href="/rules" class="{% if request.path == '/rules' %}active-link{% endif %}">Rules</a></li>
+                        <li><a href="/game" class="{% if request.path == '/game' %}active-link{% endif %}">Game</a></li>
+                        <li><a href="/money" class="{% if request.path == '/money' %}active-link{% endif %}">Money</a></li>
                         <li><a class="accent-link" href="/logout" class="{% if request.path == '/logout' %}active-link{% endif %}">Log Out</a></li>
                     {% else %}
                         <li class="home-li"><a href="/" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>

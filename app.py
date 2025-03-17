@@ -1,3 +1,4 @@
+from math import log
 from click import confirm
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -119,10 +120,12 @@ def rules():
     return render_template('rules.html')
 
 @app.route('/game')
+@login_required
 def game():
     return render_template('game.html')
 
 @app.route('/money')
+@login_required
 def money():
     return render_template('money.html')
 # add tabele for money and implement transactions

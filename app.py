@@ -5,17 +5,38 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import sqlite3
 import bcrypt
 import re
+import os
 
 
 def is_alphanumeric(s):
+    """Check if a string contains only alphanumeric characters."""
     return bool(re.match('^[a-zA-Z0-9]*$', s))
 
 def get_db_connection():
+    """Connect to the database."""
     conn = sqlite3.connect("user_data.db")
     conn.row_factory = sqlite3.Row
     return conn
 
+def gbp(value):
+    """Format value as GBP."""
+    return f"£{value:,.2f}"
+
+def make_tables():
+    """Create tables if they do not already exist."""
+    try:
+        with get_db_connection() as db:
+            with open(os.path.join(os.path.dirname(__file__), 'schema.sql'), 'r') as file:
+                db.executescript(file.read())
+                db.commit()
+        db.close()
+
+    except Exception as e:
+        print(f"Error during table creation: {e}")
+
 app = Flask(__name__)
+
+app.jinja_env.filters['gbp'] = gbp
 
 app.secret_key = "b'a\x01\xe0I\x1dB\xd6\x1cGb\xc0:\xe4X\x8fV\xf2\xfb\xb9\xdf\xc0Ld\xbf\x0b<\xf8}-\xa1G\xce'"
 login_manager = LoginManager()
@@ -127,5 +148,19 @@ def game():
 @app.route('/money')
 @login_required
 def money():
-    return render_template('money.html')
-# add tabele for money and implement transactions
+    db = get_db_connection()
+    user_id = current_user.id
+
+    transactions_db = db.execute("SELECT * FROM transactions WHERE USER_ID = ?", (user_id,)).fetchall()
+    balance_db = db.execute("SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)).fetchone()
+
+    db.close()
+    
+    balance = balance_db['balance'] if balance_db else 0
+    
+    return render_template('money.html', transactions=transactions_db, balance=balance)
+
+
+if __name__ == '__main__':
+    make_tables()
+    app.run(debug=True)

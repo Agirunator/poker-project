@@ -160,6 +160,30 @@ def money():
     
     return render_template('money.html', transactions=transactions_db, balance=balance)
 
+@app.route('/money/deposit', methods=['POST'])
+@login_required
+def deposit():
+    db = get_db_connection()
+    user_id = current_user.id
+    amount = request.form['amount']
+    db.execute("INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, amount))
+    db.execute("UPDATE balance SET balance = balance + ? WHERE USER_ID = ?", (amount, user_id))
+    db.commit()
+    db.close()
+    return redirect(url_for('money'))
+
+@app.route('/money/withdraw', methods=['POST'])
+@login_required
+def withdraw():
+    db = get_db_connection()
+    user_id = current_user.id
+    amount = request.form['amount']
+    db.execute("INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, -amount))
+    db.execute("UPDATE balance SET balance = balance - ? WHERE USER_ID = ?", (amount, user_id))
+    db.commit()
+    db.close()
+    return redirect(url_for('money'))
+
 
 if __name__ == '__main__':
     make_tables()

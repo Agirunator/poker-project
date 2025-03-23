@@ -39,7 +39,7 @@
                 {% for transaction in transactions %}
                     <tr>
                         <td>{{ transaction.amount | gbp }}</td>
-                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.transaction_time }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -119,6 +119,8 @@ def register():
         return redirect(url_for('auth'))
     
     db.execute("INSERT INTO users (username, password, first_name, last_name) VALUES (?, ?, ?, ?)", (username, hashed_password, first_name, last_name))
+    user_id = db.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()['id']
+    db.execute("INSERT INTO balance (USER_ID, balance) VALUES (?, ?)", (user_id, 0))
     db.commit()
     db.close()
 
@@ -177,11 +179,15 @@ def deposit():
 def withdraw():
     db = get_db_connection()
     user_id = current_user.id
-    amount = request.form['amount']
-    db.execute("INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, -amount))
-    db.execute("UPDATE balance SET balance = balance - ? WHERE USER_ID = ?", (amount, user_id))
-    db.commit()
-    db.close()
+    try:
+        amount = float(request.form['amount'])
+        db.execute("INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, -amount))
+        db.execute("UPDATE balance SET balance = balance - ? WHERE USER_ID = ?", (amount, user_id))
+        db.commit()
+    except ValueError:
+        flash("Invalid amount entered.", "error")
+    finally:
+        db.close()
     return redirect(url_for('money'))
 
 

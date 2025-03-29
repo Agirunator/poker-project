@@ -1,6 +1,6 @@
 import random
 
-from . import consts
+from . import consts, eval
 
 
 class Card:
@@ -24,6 +24,11 @@ class Card:
         Display the card as a string in the format "Rank of Suit".
         """
         print(f"{self.rank}{consts.SUITS_SYMBOLS[self.suit]}")
+    
+    def __img__(self):
+        suit_code=consts.SUITS_CODES[self.suit]
+        rank_code=f"{eval.rank_values(self.rank)[0]:02}"
+        return f"static/images/cards/{suit_code}{rank_code}.png"
 
 
 class Deck:

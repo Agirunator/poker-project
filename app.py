@@ -1,4 +1,5 @@
-from math import log
+from math import e, log
+import time
 from click import confirm
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -6,7 +7,8 @@ import sqlite3
 import bcrypt
 import re
 import os
-
+from packages.poker import cards
+from packages.poker.gameplay import deal_hands
 
 def is_alphanumeric(s):
     """Check if a string contains only alphanumeric characters."""
@@ -142,10 +144,53 @@ def home():
 def rules():
     return render_template('rules.html')
 
-@app.route('/game')
+@app.route('/game') # TODO: Retrieve player username and balance. Start game
 @login_required
-def game():
+def gameplay():
     return render_template('game.html')
+
+@app.route('/game/pre-flop') # TODO: Pre-flop betting
+@login_required
+def game_pre_flop():
+    if 'DECK' not in app.config or app.config['DECK'].size() <= 26:
+        app.config['DECK'] = cards.Deck()
+        app.config['DECK'].shuffle()
+    # Else do nothing bc deck is already shuffled and is big enough
+
+    app.config['PLAYER'] = cards.Player(current_user.username)
+    app.config['BOT'] = cards.Player("Bot")
+
+    deal_hands(app.config['DECK'], [app.config['PLAYER'].hand, app.config['BOT'].hand])
+
+    app.config['PLAYER'].hand.display()
+
+    print(app.config['PLAYER'].hand.cards[0])
+    print(app.config['PLAYER'].hand.cards[0].__img__())
+    print(app.config['PLAYER'].hand.cards[1])
+    print(app.config['PLAYER'].hand.cards[1].__img__())
+
+    player_hand = [card.__img__() for card in app.config['PLAYER'].hand.cards]
+
+    table_cards = ['back.png'] * 5
+
+    print(player_hand)
+
+    return render_template('game_pre_flop.html', player_hand=player_hand, table_cards=table_cards)
+
+@app.route('/game/flop') # TODO: Flop betting
+@login_required
+def game_flop():
+    pass
+
+@app.route('/game/turn') # TODO: Turn betting
+@login_required
+def game_turn():    
+    pass
+
+@app.route('/game/river') # TODO: River betting. Go to result and possibly new/end games
+@login_required
+def game_river():
+    pass
 
 @app.route('/money')
 @login_required

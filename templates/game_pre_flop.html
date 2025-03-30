@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %} - In Game{% endblock %}
+
+{% block body %}
+    <div class="page-content">
+        <div class="table-background">
+            <div class="bot-cards">
+                <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+            </div>
+
+            <div class="table-cards">
+                {% for card in table_cards %}
+                    <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                {% endfor %}
+            </div>
+
+            <div class="player-cards">
+                {% for card in player_hand %}
+                    <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}  

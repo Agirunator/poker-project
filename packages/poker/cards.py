@@ -28,7 +28,7 @@ class Card:
     def __img__(self):
         suit_code=consts.SUITS_CODES[self.suit]
         rank_code=f"{eval.rank_values(self.rank)[0]:02}"
-        return f"static/images/cards/{suit_code}{rank_code}.png"
+        return f"{suit_code}{rank_code}.png"
 
 
 class Deck:
@@ -97,3 +97,27 @@ class Table:
 
     def display(self):
         print(" ".join([card.__str__() for card in self.flop + self.turn + self.river]))
+
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.hand = Hand()
+        self.bet = 0
+        self.marked = False
+
+    def place_bet(self, amount):
+        self.bet = amount   
+
+    def fold(self):
+        self.hand = Hand()
+    
+    def raise_bet(self, amount):
+        self.bet += amount
+
+    
+class Bet:
+    def __init__(self, amount, player, round):
+        self.amount = amount
+        self.player = player
+        self.round = round

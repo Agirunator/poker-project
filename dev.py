@@ -1,5 +1,5 @@
 from packages.poker.cards import Deck, Hand, Table
-from packages.poker.game import deal_hands, deal_table
+from packages.poker.gameplay import deal_hands, deal_table
 from packages.poker.eval import best_hand
 import packages.poker.consts as consts
 

@@ -23,7 +23,7 @@
     box-sizing: border-box;
   }
   html{
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
   }
   body{
     min-height: 100vh;
@@ -555,4 +555,44 @@ tr:nth-child(even) {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* game */
+
+.card-img {
+  width: 100px;
+  height: 140px;
+  margin: 10px;
+  display: inline-block;
+}
+
+.bot-cards, .table-cards, .player-cards {
+  display: flex;
+  justify-content: center;
+}
+
+.bot-cards {
+  margin-bottom: 20px;
+}
+
+.table-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* margin: 0; */
+}
+
+.player-cards {
+  margin-top: 20px;
+}
+
+.table-background {
+  background-color: #226a34;
+  width: 80%;
+  border-radius: 100px;
+  padding: 20px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

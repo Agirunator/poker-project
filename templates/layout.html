@@ -5,15 +5,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TheAnte{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="static/css/styles.css">
-        <script type="text/javascript" src="static/js/darkmode.js" defer></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <!-- <script type="text/javascript" src="static/js/darkmode.js" defer></script> -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/darkmode.js') }}" defer></script>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </head>
     <body>
         <header>
             <nav>
                 <ul>
-                    <img src="static/images/TheAnte_logo.png" alt="logo" id="logo">
+                    <img src="{{ url_for('static', filename='images/TheAnte_logo.png') }}" alt="TheAnte Logo" id="logo">
                     {% if current_user.is_authenticated %}
                         <li class="home-li"><a href="/home" class="{% if request.path == '/home' %}active-link{% endif %}">Home</a></li>
                         <li><a href="/rules" class="{% if request.path == '/rules' %}active-link{% endif %}">Rules</a></li>

@@ -8,7 +8,7 @@ def rank_values(ranks):
     """Convert card ranks to numerical values for evaluation."""
     rank_mapping = {
         "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, 
-        "J": 11, "Q": 12, "K": 13, "A": 14
+        "J": 11, "Q": 12, "K": 13, "A": 14, "1": 10, "0": 10,
     }
     return [rank_mapping[rank] for rank in ranks]
 

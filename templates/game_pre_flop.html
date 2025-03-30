@@ -4,22 +4,36 @@
 
 {% block body %}
     <div class="page-content">
-        <div class="table-background">
-            <div class="bot-cards">
-                <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
-                <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+        <div class="game-container">
+            <div class="pot-info">
+                <h3>Pot Total: {{ pot_total | gbp }}</h3>
+                <h3>Top Bet: {{ top_bet | gbp }}</h3>
+                <h3>Current Bet: {{ current_bet | gbp }}</h3>
+                <h3>Player Balance: {{ player_balance | gbp }}</h3>
             </div>
+            <div class="table-background">
+                <div class="bot-cards">
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                </div>
 
-            <div class="table-cards">
-                {% for card in table_cards %}
-                    <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
-                {% endfor %}
+                <div class="table-cards">
+                    {% for card in table_cards %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                    {% endfor %}
+                </div>
+
+                <div class="player-cards">
+                    {% for card in player_hand %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                    {% endfor %}
+                </div>
             </div>
-
-            <div class="player-cards">
-                {% for card in player_hand %}
-                    <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
-                {% endfor %}
+            <div class="betting-actions">
+                <button class="betting-action" id="check" {% if not can_check %}disabled{% endif %}>Check</button>
+                <button class="betting-action" id="call" {% if not can_call %}disabled{% endif %}>Call</button>
+                <button class="betting-action" id="raise" {% if not can_raise %}disabled{% endif %}>Raise</button>
+                <button class="betting-action" id="fold" {% if not can_fold %}disabled{% endif %}>Fold</button>
             </div>
         </div>
     </div>

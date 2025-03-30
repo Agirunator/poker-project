@@ -175,7 +175,7 @@ def game_pre_flop():
 
     print(player_hand)
 
-    return render_template('game_pre_flop.html', player_hand=player_hand, table_cards=table_cards)
+    return render_template('game_pre_flop.html', player_hand=player_hand, table_cards=table_cards, pot_total=0, top_bet=0, current_bet=0, player_balance=0)
 
 @app.route('/game/flop') # TODO: Flop betting
 @login_required

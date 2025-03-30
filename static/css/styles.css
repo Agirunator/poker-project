@@ -480,7 +480,7 @@ th, td {
 }
 
 th {
-  background-color: var(--primary-color);
+  background-color: var(--base-variant);
   color: var(--text-color);
   font-weight: bold;
   text-transform: uppercase;
@@ -489,7 +489,7 @@ th {
 }
 
 tr:nth-child(even) {
-  background-color: var(--primary-color);
+  background-color: var(--base-variant);
 }
 
 /* money */
@@ -547,7 +547,7 @@ tr:nth-child(even) {
   transform: translateX(-50%);
   width: 100px;
   height: 48px;
-  background: var(--primary-color);
+  background: var(--base-color);
   border-radius: 8px;
   box-shadow: var(--base-shadow);
   border: none;
@@ -564,6 +564,13 @@ tr:nth-child(even) {
   height: 140px;
   margin: 10px;
   display: inline-block;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .bot-cards, .table-cards, .player-cards {
@@ -595,4 +602,19 @@ tr:nth-child(even) {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.pot-info {
+  margin-right: 20px;
+}
+
+.betting-actions {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.betting-action {
+  margin-bottom: 10px;
 }

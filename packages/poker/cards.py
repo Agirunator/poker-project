@@ -117,13 +117,10 @@ class Player:
         self.marked = False
 
     def place_bet(self, amount):
-        self.bet = amount
+        self.bet += amount
 
     def fold(self):
         self.hand = Hand()
-
-    def raise_bet(self, amount):
-        self.bet += amount
 
 
 class Bet:

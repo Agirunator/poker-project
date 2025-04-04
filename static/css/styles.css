@@ -388,6 +388,12 @@ form {
   border: 1px solid #f5c6cb;
 }
 
+.flash-box.info {
+  background-color: #dee760;
+  color: #72700b;
+  border: 1px solid #e2e1ad;
+}
+
 .close-btn {
   background: none;
   border: none;

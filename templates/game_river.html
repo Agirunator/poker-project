@@ -14,7 +14,6 @@
         {% endif %}
     {% endwith %}
 
-
     <div class="page-content">
         <div class="game-container">
             <div class="pot-info">
@@ -29,11 +28,15 @@
                 </div>
 
                 <div class="table-cards">
-                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
-                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
-                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
-                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
-                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                    {% for card in flop %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                    {% for card in turn %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                    {% for card in river %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
                 </div>
 
                 <div class="player-cards">

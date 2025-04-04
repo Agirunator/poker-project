@@ -153,6 +153,7 @@ def register():
         "INSERT INTO users (username, password, first_name, last_name) VALUES (?, ?, ?, ?)",
         (username, hashed_password, first_name, last_name),
     )
+    db.commit()
     user_id = db.execute(
         "SELECT id FROM users WHERE username = ?", (username,)
     ).fetchone()["id"]
@@ -222,11 +223,11 @@ def start_game():
     app.config["TABLE"] = cards.Table()
 
     app.config["ROUND"] = 0
-    app.config["TOP_BET"] = 0
 
     db = get_db_connection()
     user_id = current_user.id
     db.execute("UPDATE balance SET balance = balance - 5 WHERE USER_ID = ?", (user_id,))
+    db.commit()
     db.execute(
         "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, -5)
     )
@@ -268,8 +269,9 @@ def play_game():
                 )
             case 1:
                 # Flop
-                app.config["DECK"].deal()  # burn card
-                app.config["TABLE"].deal_flop(app.config["DECK"])
+                if len(app.config["TABLE"].flop) == 0:
+                    app.config["DECK"].deal()  # burn card
+                    app.config["TABLE"].deal_flop(app.config["DECK"])
                 return render_template(
                     "game_flop.html",  #! need to make this
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
@@ -282,12 +284,13 @@ def play_game():
                 )
             case 2:
                 # Turn
-                app.config["DECK"].deal()  # burn card
-                app.config["TABLE"].deal_turn(app.config["DECK"])
+                if len(app.config["TABLE"].turn) == 0:
+                    app.config["DECK"].deal()  # burn card
+                    app.config["TABLE"].deal_turn(app.config["DECK"])
                 return render_template(
                     "game_turn.html",  #! need to make this
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
-                    turn=app.config["TABLE"].turn.__img__(),
+                    turn=[card.__img__() for card in app.config["TABLE"].turn],
                     player_hand=[
                         card.__img__() for card in app.config["PLAYER"].hand.cards
                     ],
@@ -297,13 +300,14 @@ def play_game():
                 )
             case 3:
                 # River
-                app.config["DECK"].deal()  # burn card
-                app.config["TABLE"].deal_river(app.config["DECK"])
+                if len(app.config["TABLE"].river) == 0:
+                    app.config["DECK"].deal()  # burn card
+                    app.config["TABLE"].deal_river(app.config["DECK"])
                 return render_template(
                     "game_river.html",  #! need to make this
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
-                    turn=app.config["TABLE"].turn.__img__(),
-                    river=app.config["TABLE"].river.__img__(),
+                    turn=[card.__img__() for card in app.config["TABLE"].turn],
+                    river=[card.__img__() for card in app.config["TABLE"].river],
                     player_hand=[
                         card.__img__() for card in app.config["PLAYER"].hand.cards
                     ],
@@ -328,25 +332,22 @@ def game_bet():
 
     match request.form["action"]:
         case "check":
-            if (
-                app.config["PLAYER"].bet
-                < app.config["TOP_BET"] - app.config["PLAYER"].bet
-            ):
-                flash("You cannot check, you must call or raise.")
+            if app.config["PLAYER"].bet < app.config["BOT"].bet:
+                flash("You cannot check, you must call or raise.", "info")
             else:
-                flash(f'{app.config["PLAYER"].name} checks.')
+                flash(f'{app.config["PLAYER"].name} checks.', "info")
         case "call":
-            if (
-                app.config["PLAYER"].bet
-                < app.config["TOP_BET"] - app.config["PLAYER"].bet
-            ):
-                call_amount = app.config["TOP_BET"] - app.config["PLAYER"].bet
+            if app.config["PLAYER"].bet >= app.config["BOT"].bet:
+                flash("You cannot call, you must check or raise.", "info")
+            else:
+                call_amount = app.config["BOT"].bet - app.config["PLAYER"].bet
                 db = get_db_connection()
                 user_id = current_user.id
                 db.execute(
                     "UPDATE balance SET balance = balance - ? WHERE USER_ID = ?",
                     (call_amount, user_id),
                 )
+                db.commit()
                 db.execute(
                     "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
                     (user_id, -call_amount),
@@ -354,17 +355,16 @@ def game_bet():
                 db.commit()
                 db.close()
                 app.config["PLAYER"].place_bet(call_amount)
-                flash(f'{app.config["PLAYER"].name} calls {call_amount}.')
-            else:
-                flash("You cannot call, you must check or raise.")
+                flash(f'{app.config["PLAYER"].name} calls {call_amount}.', "info")
         case "fold":
             app.config["PLAYER"].fold()
-            flash(f'{app.config["PLAYER"].name} folds.')
+            flash(f'{app.config["PLAYER"].name} folds.', "info")
             return redirect(url_for("end_game"))
         case "raise":
-            if bet_amount <= app.config["TOP_BET"] - app.config["PLAYER"].bet:
+            if bet_amount <= app.config["BOT"].bet - app.config["PLAYER"].bet:
                 flash(
-                    f'Your raise must be greater than {app.config["TOP_BET"] - app.config["PLAYER"].bet}.'
+                    f'Your raise must be greater than {app.config["BOT"].bet - app.config["PLAYER"].bet}.',
+                    "info",
                 )
             else:
                 db = get_db_connection()
@@ -373,87 +373,123 @@ def game_bet():
                     "UPDATE balance SET balance = balance - ? WHERE USER_ID = ?",
                     (bet_amount, user_id),
                 )
+                db.commit()
                 db.execute(
                     "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
                     (user_id, -bet_amount),
                 )
                 db.commit()
                 db.close()
-                app.config["PLAYER"].raise_bet(bet_amount)
-                app.config["TOP_BET"] = max(
-                    app.config["BOT"].bet, app.config["PLAYER"].bet
-                )
-                flash(f'{app.config["PLAYER"].name} raises {bet_amount}.')
+                app.config["PLAYER"].place_bet(bet_amount)
+                flash(f'{app.config["PLAYER"].name} raises {bet_amount}.', "info")
 
     app.config["PLAYER_TURN"] = False
 
     return redirect(url_for("play_game"))
 
 
-@app.route(
-    "/game/bot_turn"
-)  #! Display both hands on this route and give options for home or new game
+@app.route("/game/bot_turn")
 @login_required
 def game_bot_turn():
     # player either bet increases or stays the same
-    if app.config["BOT"].bet < app.config["TOP_BET"]:
+    if app.config["BOT"].bet < app.config["PLAYER"].bet:
         # bot calls or raises or folds
         actions = ["call", "raise", "fold"]
-        action_probabilities = [0.5, 0.4, 0.1]
+        action_probabilities = [0.8, 0.15, 0.05]
         bot_action = random.choices(actions, action_probabilities)[0]
         match bot_action:
             case "call":
-                call_amount = app.config["TOP_BET"] - app.config["BOT"].bet
+                call_amount = app.config["PLAYER"].bet - app.config["BOT"].bet
                 app.config["BOT"].place_bet(call_amount)
+                flash(f"Bot calls {call_amount}.", "info")
             case "raise":
-                raise_amounts = [5, 10, 20, 100]
+                db = get_db_connection()
+                user_id = current_user.id
+                balance_db = db.execute(
+                    "SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)
+                ).fetchone()
+                user_balance = balance_db["balance"]
+                db.close()
+
+                raise_amounts = [
+                    5 if 5 <= user_balance else user_balance,
+                    10 if 10 <= user_balance else user_balance,
+                    20 if 20 <= user_balance else user_balance,
+                    100 if 100 <= user_balance else user_balance,
+                ]
                 raise_probabilities = [0.5, 0.3, 0.19, 0.01]
                 bot_raise_amount = random.choices(raise_amounts, raise_probabilities)[0]
-                app.config["BOT"].raise_bet(bot_raise_amount)
-                app.config["TOP_BET"] = max(
-                    app.config["BOT"].bet, app.config["PLAYER"].bet
-                )
+                app.config["BOT"].place_bet(bot_raise_amount)
+                flash(f"Bot raises by {bot_raise_amount}.", "info")
             case "fold":
                 app.config["BOT"].fold()
+                flash("Bot folds.", "info")
                 return redirect(url_for("end_game"))
     else:
         # bot checks or raises
         actions = ["check", "raise"]
-        action_probabilities = [0.5, 0.5]
+        action_probabilities = [0.8, 0.2]
         bot_action = random.choices(actions, action_probabilities)[0]
         match bot_action:
             case "check":
+                flash("Bot checks.", "info")
                 pass
             case "raise":
-                raise_amounts = [5, 10, 20, 100]
+                db = get_db_connection()
+                user_id = current_user.id
+                balance_db = db.execute(
+                    "SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)
+                ).fetchone()
+                user_balance = balance_db["balance"]
+                db.close()
+
+                raise_amounts = [
+                    5 if 5 <= user_balance else user_balance,
+                    10 if 10 <= user_balance else user_balance,
+                    20 if 20 <= user_balance else user_balance,
+                    100 if 100 <= user_balance else user_balance,
+                ]
                 raise_probabilities = [0.5, 0.3, 0.19, 0.01]
                 bot_raise_amount = random.choices(raise_amounts, raise_probabilities)[0]
-                app.config["BOT"].raise_bet(bot_raise_amount)
-                app.config["TOP_BET"] = max(
-                    app.config["BOT"].bet, app.config["PLAYER"].bet
-                )
+                app.config["BOT"].place_bet(bot_raise_amount)
+                flash(f"Bot raises by {bot_raise_amount}.", "info")
 
     if app.config["PLAYER"].bet == app.config["BOT"].bet:
         app.config["ROUND"] += 1
         if app.config["ROUND"] > 3:
             return redirect(url_for("end_game"))
-        flash("Both bets are equal. Proceeding to the next round.")
+        flash("Both bets are equal. Proceeding to the next round.", "info")
     app.config["PLAYER_TURN"] = True
     return redirect(url_for("play_game"))
 
 
+#! Display both hands on this route and give options for home or new game
 @app.route("/game/end")
 @login_required
 def end_game():
-    player_best = eval.best_hand(app.config["PLAYER"].hand, app.config["TABLE"].cards)
-    bot_best = eval.best_hand(app.config["BOT"].hand, app.config["TABLE"].cards)
+    player_best = eval.best_hand(app.config["PLAYER"].hand, app.config["TABLE"])
+    bot_best = eval.best_hand(app.config["BOT"].hand, app.config["TABLE"])
 
     if not app.config["PLAYER"].hand:
-        flash("Bot wins!")
-        return redirect(url_for("game_end"))
+        flash("Bot wins!", "info")
+        db = get_db_connection()
+        user_id = current_user.id
+        balance_db = db.execute(
+            "SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)
+        ).fetchone()
+        db.close()
+        return render_template(
+            "game_end_fold.html",
+            player_hand=[card.__img__() for card in app.config["PLAYER"].hand.cards],
+            flop=[card.__img__() for card in app.config["TABLE"].flop],
+            turn=[card.__img__() for card in app.config["TABLE"].turn],
+            river=[card.__img__() for card in app.config["TABLE"].river],
+            pot_total=app.config["PLAYER"].bet + app.config["BOT"].bet,
+            player_balance=balance_db["balance"],
+        )  # TODO: html page
 
     if not app.config["BOT"].hand:
-        flash("Player wins!")
+        flash("Player wins!", "info")
         winnings = app.config["PLAYER"].bet + app.config["BOT"].bet
         db = get_db_connection()
         user_id = current_user.id
@@ -461,16 +497,31 @@ def end_game():
             "UPDATE balance SET balance = balance + ? WHERE USER_ID = ?",
             (winnings, user_id),
         )
+        db.commit()
         db.execute(
             "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
             (user_id, winnings),
         )
         db.commit()
         db.close()
-        return redirect(url_for("game_end"))
+        db = get_db_connection()
+        user_id = current_user.id
+        balance_db = db.execute(
+            "SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)
+        ).fetchone()
+        db.close()
+        return render_template(
+            "game_end_fold.html",
+            player_hand=[card.__img__() for card in app.config["PLAYER"].hand.cards],
+            flop=[card.__img__() for card in app.config["TABLE"].flop],
+            turn=[card.__img__() for card in app.config["TABLE"].turn],
+            river=[card.__img__() for card in app.config["TABLE"].river],
+            pot_total=app.config["PLAYER"].bet + app.config["BOT"].bet,
+            player_balance=balance_db["balance"],
+        )  # TODO: html page
 
     if player_best["hand_rank"] > bot_best["hand_rank"]:
-        flash("Player wins!")
+        flash("Player wins!", "info")
         winnings = app.config["PLAYER"].bet + app.config["BOT"].bet
         db = get_db_connection()
         user_id = current_user.id
@@ -478,6 +529,7 @@ def end_game():
             "UPDATE balance SET balance = balance + ? WHERE USER_ID = ?",
             (winnings, user_id),
         )
+        db.commit()
         db.execute(
             "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
             (user_id, winnings),
@@ -485,39 +537,24 @@ def end_game():
         db.commit()
         db.close()
     elif player_best["hand_rank"] < bot_best["hand_rank"]:
-        flash("Bot wins!")
+        flash("Bot wins!", "info")
     else:
-        flash("It's a tie!")
-
-    return redirect(url_for("game_end"))
-
-
-@app.route("/game/pre-flop", methods=["GET", "POST"])  # TODO: Pre-flop betting
-@login_required
-def game_pre_flop():
-
-    app.config["PLAYER"] = cards.Player(current_user.username)
-    app.config["BOT"] = cards.Player("Bot")
-
-    deal_hands(app.config["DECK"], [app.config["PLAYER"].hand, app.config["BOT"].hand])
-
-    player_hand = [card.__img__() for card in app.config["PLAYER"].hand.cards]
-    table_cards = ["back.png"] * 5
+        flash("It's a tie!", "info")
 
     db = get_db_connection()
-    user_id = current_user.id
     balance_db = db.execute(
-        "SELECT balance FROM balance WHERE USER_ID = ?", (user_id,)
+        "SELECT balance FROM balance WHERE USER_ID = ?", (current_user.id,)
     ).fetchone()
     db.close()
 
-    return render_template(
-        "game_pre_flop.html",
-        player_hand=player_hand,
-        table_cards=table_cards,
-        pot_total=0,
-        top_bet=0,
-        current_bet=0,
+    return render_template(  # TODO: html page
+        "game_end.html",
+        flop=[card.__img__() for card in app.config["TABLE"].flop],
+        turn=[card.__img__() for card in app.config["TABLE"].turn],
+        river=[card.__img__() for card in app.config["TABLE"].river],
+        player_hand=[card.__img__() for card in app.config["PLAYER"].hand.cards],
+        bot_hand=[card.__img__() for card in app.config["BOT"].hand.cards],
+        pot_total=app.config["PLAYER"].bet + app.config["BOT"].bet,
         player_balance=balance_db["balance"],
     )
 
@@ -551,6 +588,7 @@ def deposit():
     db.execute(
         "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)", (user_id, amount)
     )
+    db.commit()
     db.execute(
         "UPDATE balance SET balance = balance + ? WHERE USER_ID = ?", (amount, user_id)
     )
@@ -570,6 +608,7 @@ def withdraw():
             "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
             (user_id, -amount),
         )
+        db.commit()
         db.execute(
             "UPDATE balance SET balance = balance - ? WHERE USER_ID = ?",
             (amount, user_id),

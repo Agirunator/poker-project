@@ -24,10 +24,10 @@ class Card:
         Display the card as a string in the format "Rank of Suit".
         """
         print(f"{self.rank}{consts.SUITS_SYMBOLS[self.suit]}")
-    
+
     def __img__(self):
-        suit_code=consts.SUITS_CODES[self.suit]
-        rank_code=f"{eval.rank_values(self.rank)[0]:02}"
+        suit_code = consts.SUITS_CODES[self.suit]
+        rank_code = f"{eval.rank_values(self.rank)[0]:02}"
         return f"{suit_code}{rank_code}.png"
 
 
@@ -36,20 +36,22 @@ class Deck:
         """
         Initialize a Deck object with 52 cards.
         """
-        self.cards = [Card(suit, rank) for suit in consts.SUITS for rank in consts.RANKS]
+        self.cards = [
+            Card(suit, rank) for suit in consts.SUITS for rank in consts.RANKS
+        ]
 
     def shuffle(self):
         """
         Shuffle the cards in the deck.
-        """   
+        """
         random.shuffle(self.cards)
 
     def deal(self):
         """
-        Deal a card from the deck.  
+        Deal a card from the deck.
         """
         return self.cards.pop()
-    
+
     def size(self):
         """
         Return the number of cards left in the deck.
@@ -61,6 +63,7 @@ class Hand:
     """
     A Hand object represents a set of cards. It is initially empty when created.
     """
+
     def __init__(self):
         self.cards = []
 
@@ -76,6 +79,13 @@ class Hand:
         """
         print(" ".join([card.__str__() for card in self.cards]))
 
+    def size(self):
+        """
+        Return the number of cards in the hand.
+        """
+        return len(self.cards)
+
+
 class Table:
     def __init__(self):
         self.flop = []
@@ -86,7 +96,7 @@ class Table:
         self.flop = []
         for _ in range(3):
             self.flop.append(deck.deal())
-    
+
     def deal_turn(self, deck: Deck):
         self.turn = []
         self.turn = [deck.deal()]
@@ -107,15 +117,15 @@ class Player:
         self.marked = False
 
     def place_bet(self, amount):
-        self.bet = amount   
+        self.bet = amount
 
     def fold(self):
         self.hand = Hand()
-    
+
     def raise_bet(self, amount):
         self.bet += amount
 
-    
+
 class Bet:
     def __init__(self, amount, player, round):
         self.amount = amount

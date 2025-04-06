@@ -540,6 +540,19 @@ def end_game():
         flash("Bot wins!", "info")
     else:
         flash("It's a tie!", "info")
+        db = get_db_connection()
+        user_id = current_user.id
+        db.execute(
+            "UPDATE balance SET balance = balance + ? WHERE USER_ID = ?",
+            (app.config["PLAYER"].bet, user_id),
+        )
+        db.commit()
+        db.execute(
+            "INSERT INTO transactions (USER_ID, amount) VALUES (?, ?)",
+            (user_id, app.config["PLAYER"].bet),
+        )
+        db.commit()
+        db.close()
 
     db = get_db_connection()
     balance_db = db.execute(

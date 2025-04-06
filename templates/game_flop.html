@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %} - In Game{% endblock %}
+
+{% block body %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-box {{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'">X</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+    <div class="page-content">
+        <div class="game-container">
+            <div class="pot-info">
+                <h3>Pot Total: {{ pot_total | gbp }}</h3>
+                <h3>Current Bet: {{ current_bet | gbp }}</h3>
+                <h3>Player Balance: {{ player_balance | gbp }}</h3>
+            </div>
+            <div class="table-background">
+                <div class="bot-cards">
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                </div>
+
+                <div class="table-cards">
+                    {% for card in flop %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                    <img src="{{ url_for('static', filename='images/cards/back.png') }}" alt="Back of Card" class="card-img">
+                </div>
+
+                <div class="player-cards">
+                    {% for card in player_hand %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="betting-actions">
+                <form action="{{ url_for('game_bet') }}" method="POST">
+                    <button class="betting-action" name="action" value="check" id="check" {% if current_bet != (pot_total / 2) %}disabled{% endif %}>Check</button>
+                    <button class="betting-action" name="action" value="call" id="call" {% if current_bet == (pot_total / 2) %}disabled{% endif %}>Call</button>
+                    <button class="betting-action" name="action" value="raise" id="raise" onclick="if (document.getElementsByName('bet_amount')[0].value === '') { alert('Please enter a bet amount.'); return false; }">Raise</button>
+                    <input class="betting-input" type="number" name="bet_amount" placeholder="Bet Amount" min="0" max="{{ player_balance }}" step="0.01">
+                    <button class="betting-action" name="action" value="fold" id="fold">Fold</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}  

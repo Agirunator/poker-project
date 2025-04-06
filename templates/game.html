@@ -7,6 +7,9 @@
 {% block body %}
     <div class="page-content">
         <h1>Game</h1>
+        <form action="{{ url_for('start_game') }}" method="POST" style="display: flex; justify-content: center;">
+            <button id="start-game" type="submit">Start Game</button>
+        </form>
     </div>
 {% endblock %} 
 

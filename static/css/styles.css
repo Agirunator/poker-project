@@ -23,7 +23,7 @@
     box-sizing: border-box;
   }
   html{
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
   }
   body{
     min-height: 100vh;
@@ -388,6 +388,12 @@ form {
   border: 1px solid #f5c6cb;
 }
 
+.flash-box.info {
+  background-color: #dee760;
+  color: #72700b;
+  border: 1px solid #e2e1ad;
+}
+
 .close-btn {
   background: none;
   border: none;
@@ -463,4 +469,203 @@ form {
   font-size: 14px;
   line-height: 1.4;
   color: #a4a5b8;
+}
+
+/* table */
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  display: block;
+  height: 300px;
+  overflow-y: scroll;
+  table-layout: fixed;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px; 
+  border-bottom: 1px solid var(--accent-color);
+  width: 15vw;
+}
+
+th {
+  background-color: var(--base-variant);
+  color: var(--text-color);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(var(--secondary-text), 0.5);
+}
+
+tr:nth-child(even) {
+  background-color: var(--base-variant);
+}
+
+/* money */
+
+.money-dashboard {
+  display: flex;
+  gap: 30px;
+  width: 90%;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.money-box {
+  position: relative;
+  width: 40vw;
+  height: 200px;
+  background: var(--base-variant);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--base-shadow);
+  overflow: hidden;
+  transition: width .6s ease-in-out, transform .6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.money-input-box {
+  position: relative;
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.money-input-box input {
+  width: 90%;
+  padding: 13px;
+  background: var(--base-color);
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.money-input-box input::placeholder {
+  color: var(--secondary-text);
+  font-weight: 400;
+}
+
+.money-box button {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 48px;
+  background: var(--base-color);
+  border-radius: 8px;
+  box-shadow: var(--base-shadow);
+  border: none;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* game */
+
+.card-img {
+  width: 100px;
+  height: 140px;
+  margin: 10px;
+  display: inline-block;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bot-cards, .table-cards, .player-cards {
+  display: flex;
+  justify-content: center;
+}
+
+.bot-cards {
+  margin-bottom: 20px;
+}
+
+.table-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* margin: 0; */
+}
+
+.player-cards {
+  margin-top: 20px;
+}
+
+.table-background {
+  background-color: #226a34;
+  width: 80%;
+  border-radius: 100px;
+  padding: 20px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pot-info {
+  margin-right: 20px;
+}
+
+.betting-actions {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.betting-action {
+  margin-bottom: 10px;
+  display: flex;
+  width: 105%;
+}
+
+.betting-input {
+  width: 105%;
+  padding: 13px;
+  background: var(--base-variant);
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-color);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.betting-action form {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.game-end-buttons {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-end-buttons button {
+  display: flex;
+  width: 105%;
+  padding: 13px;
+  background: var(--base-variant);
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-color);
+  font-weight: 500;
+  margin-bottom: 10px;
 }

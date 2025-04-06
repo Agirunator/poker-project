@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    - Game End
+{% endblock %}
+
+{% block body %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-box {{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'">X</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="page-content">
+        <div class="game-container">
+            <div class="pot-info">
+                <h3>Pot Total: {{ pot_total | gbp }}</h3>
+                <h3>Player Balance: {{ player_balance | gbp }}</h3>
+            </div>
+            <div class="table-background">
+                <div class="bot-cards">
+                    {% for card in bot_hand %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                    {% endfor %}
+                </div>
+
+                <div class="table-cards">
+                    {% for card in flop %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                    {% for card in turn %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                    {% for card in river %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">    
+                    {% endfor %}
+                </div>
+
+                <div class="player-cards">
+                    {% for card in player_hand %}
+                        <img src="{{ url_for('static', filename='images/cards/' + card) }}" alt="{{ card }}" class="card-img">
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="game-end-buttons">
+                <!-- todo -->
+                 <form action="{{ url_for('start_game') }}" method="POST">
+                     <button type="submit">New Game</button>
+                 </form>
+                 <a href="{{ url_for('home') }}"><button>Home</button></a>
+                 <a href="{{ url_for('money') }}"><button>Money</button></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

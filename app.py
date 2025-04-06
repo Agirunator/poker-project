@@ -183,7 +183,7 @@ def rules():
     return render_template("rules.html")
 
 
-@app.route("/game")  # TODO: Retrieve player username and balance. Start game
+@app.route("/game")
 @login_required
 def game():
     return render_template("game.html")
@@ -206,14 +206,6 @@ def start_game():
         app.config["DECK"] = cards.Deck()
         app.config["DECK"].shuffle()
     # Else do nothing bc deck is already shuffled and is big enough
-
-    # if "PLAYER_START" not in app.config:
-    #     app.config["PLAYER_START"] = True
-
-    # if app.config["PLAYER_START"]:
-    #     app.config["PLAYER_TURN"] = True
-    # else:
-    #     app.config["PLAYER_TURN"] = False
 
     app.config["PLAYER_TURN"] = True
 
@@ -250,7 +242,6 @@ def play_game():
         ).fetchone()
         db.close()
         match app.config["ROUND"]:
-            # TODO render templates
             case 0:
                 # Pre-flop
                 if app.config["PLAYER"].hand.size() == 0:
@@ -259,7 +250,7 @@ def play_game():
                         [app.config["PLAYER"].hand, app.config["BOT"].hand],
                     )
                 return render_template(
-                    "game_pre_flop.html",  #! need to make this
+                    "game_pre_flop.html",
                     player_hand=[
                         card.__img__() for card in app.config["PLAYER"].hand.cards
                     ],
@@ -273,7 +264,7 @@ def play_game():
                     app.config["DECK"].deal()  # burn card
                     app.config["TABLE"].deal_flop(app.config["DECK"])
                 return render_template(
-                    "game_flop.html",  #! need to make this
+                    "game_flop.html",
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
                     player_hand=[
                         card.__img__() for card in app.config["PLAYER"].hand.cards
@@ -288,7 +279,7 @@ def play_game():
                     app.config["DECK"].deal()  # burn card
                     app.config["TABLE"].deal_turn(app.config["DECK"])
                 return render_template(
-                    "game_turn.html",  #! need to make this
+                    "game_turn.html",
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
                     turn=[card.__img__() for card in app.config["TABLE"].turn],
                     player_hand=[
@@ -304,7 +295,7 @@ def play_game():
                     app.config["DECK"].deal()  # burn card
                     app.config["TABLE"].deal_river(app.config["DECK"])
                 return render_template(
-                    "game_river.html",  #! need to make this
+                    "game_river.html",
                     flop=[card.__img__() for card in app.config["TABLE"].flop],
                     turn=[card.__img__() for card in app.config["TABLE"].turn],
                     river=[card.__img__() for card in app.config["TABLE"].river],
@@ -463,14 +454,10 @@ def game_bot_turn():
     return redirect(url_for("play_game"))
 
 
-#! Display both hands on this route and give options for home or new game
 @app.route("/game/end")
 @login_required
 def end_game():
-    player_best = eval.best_hand(app.config["PLAYER"].hand, app.config["TABLE"])
-    bot_best = eval.best_hand(app.config["BOT"].hand, app.config["TABLE"])
-
-    if not app.config["PLAYER"].hand:
+    if app.config["PLAYER"].folded == True:
         flash("Bot wins!", "info")
         db = get_db_connection()
         user_id = current_user.id
@@ -479,16 +466,29 @@ def end_game():
         ).fetchone()
         db.close()
         return render_template(
-            "game_end_fold.html",
+            "game_end.html",
             player_hand=[card.__img__() for card in app.config["PLAYER"].hand.cards],
-            flop=[card.__img__() for card in app.config["TABLE"].flop],
-            turn=[card.__img__() for card in app.config["TABLE"].turn],
-            river=[card.__img__() for card in app.config["TABLE"].river],
+            flop=(
+                [card.__img__() for card in app.config["TABLE"].flop]
+                if len(app.config["TABLE"].flop) == 3
+                else ["back.png"] * 3
+            ),
+            turn=(
+                [card.__img__() for card in app.config["TABLE"].turn]
+                if len(app.config["TABLE"].turn) == 1
+                else ["back.png"]
+            ),
+            river=(
+                [card.__img__() for card in app.config["TABLE"].river]
+                if len(app.config["TABLE"].river) == 1
+                else ["back.png"]
+            ),
             pot_total=app.config["PLAYER"].bet + app.config["BOT"].bet,
             player_balance=balance_db["balance"],
-        )  # TODO: html page
+            bot_hand=["back.png"] * 2,
+        )
 
-    if not app.config["BOT"].hand:
+    if app.config["BOT"].folded == True:
         flash("Player wins!", "info")
         winnings = app.config["PLAYER"].bet + app.config["BOT"].bet
         db = get_db_connection()
@@ -511,14 +511,30 @@ def end_game():
         ).fetchone()
         db.close()
         return render_template(
-            "game_end_fold.html",
+            "game_end.html",
             player_hand=[card.__img__() for card in app.config["PLAYER"].hand.cards],
-            flop=[card.__img__() for card in app.config["TABLE"].flop],
-            turn=[card.__img__() for card in app.config["TABLE"].turn],
-            river=[card.__img__() for card in app.config["TABLE"].river],
+            flop=(
+                [card.__img__() for card in app.config["TABLE"].flop]
+                if len(app.config["TABLE"].flop) == 3
+                else ["back.png"] * 3
+            ),
+            turn=(
+                [card.__img__() for card in app.config["TABLE"].turn]
+                if len(app.config["TABLE"].turn) == 1
+                else ["back.png"]
+            ),
+            river=(
+                [card.__img__() for card in app.config["TABLE"].river]
+                if len(app.config["TABLE"].river) == 1
+                else ["back.png"]
+            ),
             pot_total=app.config["PLAYER"].bet + app.config["BOT"].bet,
             player_balance=balance_db["balance"],
-        )  # TODO: html page
+            bot_hand=["back.png"] * 2,
+        )
+
+    player_best = eval.best_hand(app.config["PLAYER"].hand, app.config["TABLE"])
+    bot_best = eval.best_hand(app.config["BOT"].hand, app.config["TABLE"])
 
     if player_best["hand_rank"] > bot_best["hand_rank"]:
         flash("Player wins!", "info")
@@ -560,7 +576,7 @@ def end_game():
     ).fetchone()
     db.close()
 
-    return render_template(  # TODO: html page
+    return render_template(
         "game_end.html",
         flop=[card.__img__() for card in app.config["TABLE"].flop],
         turn=[card.__img__() for card in app.config["TABLE"].turn],

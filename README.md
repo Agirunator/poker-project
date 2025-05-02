@@ -1,17 +1,30 @@
 
-# Project Title
+# Poker Project <!-- omit in toc -->
 
-A brief description of what this project does and who it's for
+This is a poker website project that allows you to sign up, manage your money and play poker.
 
 
-## Contents
+## Contents <!-- omit in toc -->
 
-Generate this at the end
+- [Demo](#demo)
+- [Run Locally](#run-locally)
+- [Features](#features)
+- [Database Structure](#database-structure)
+  - [1. **Table: `users`**](#1-table-users)
+  - [2. **Table: `balance`**](#2-table-balance)
+  - [3. **Table: `transactions`**](#3-table-transactions)
+- [Usage/Examples](#usageexamples)
+    - [Creating a Card](#creating-a-card)
+    - [Creating a Hand](#creating-a-hand)
+    - [Dealing a Table](#dealing-a-table)
+    - [Evaluating a Hand](#evaluating-a-hand)
+- [Screenshots](#screenshots)
+- [Acknowledgements](#acknowledgements)
 
 
 ## Demo
 
-Insert gif or link to demo
+[![Demo Video](https://img.youtube.com/vi/_cNUt9rsFgo/0.jpg)](https://youtube.com/embed/_cNUt9rsFgo)
 
 
 ## Run Locally
@@ -44,13 +57,13 @@ Start the app
 ## Features
 
 - Light/dark mode toggle
-- Live previews
-- Fullscreen mode
-- Cross platform
+- Money management
+- Poker game
+- Accounts with sign up and log in
 
 ## Database Structure
 
-This section outlines the SQL tables and their relationships.
+This section outlines the SQL tables and their relationships. SQL is used in this project to handle users, logins and money management.
 
 ### 1. **Table: `users`**
    - **Description**: Stores information about the users.
@@ -92,23 +105,86 @@ This section outlines the SQL tables and their relationships.
 
 ## Usage/Examples
 
-```javascript
-import Component from 'my-project'
+#### Creating a Card
 
-function App() {
-  return <Component />
-}
+You can create a card using the `Card` class from the `cards` module:
+
+```python
+from packages.poker.cards import Card
+
+# Create a card
+card = Card(suit="Diamonds", rank="7")
+print("Card:", card)
+```
+
+#### Creating a Hand
+
+You can create a hand using the `Hand` class from the `cards` module:
+
+```python
+from packages.poker.cards import Card, Hand
+
+# Create a hand
+hand = Hand()
+hand.add_card(Card(suit="Diamonds", rank="7"))
+hand.add_card(Card(suit="Hearts", rank="Q"))
+
+hand.display()
+```
+
+#### Dealing a Table
+
+You can create and deal a table using the `Table` class from the `cards` module:
+
+```python
+from packages.poker.cards import Table, Deck
+
+# Create a deck
+deck = Deck()
+deck.shuffle()
+
+# Create a table
+table = Table()
+table.deal_flop(deck)
+table.deal_turn(deck)
+table.deal_river(deck)
+table.display()
+```
+
+#### Evaluating a Hand
+
+you can evaluate a hand using the `best_hand` function from the `eval` module:
+
+```python
+from packages.poker.eval import best_hand
+from packages.poker.cards import Table, Deck, Hand
+from packages.poker.gameplay import deal_table, deal_hands
+
+# Create a deck
+deck = Deck()
+deck.shuffle()
+
+# Create a table and hand
+table = Table()
+hand = Hand()
+
+# Deal cards
+deal_hands(deck, [hand])
+deal_table(deck, table)
+
+# Evaluate the hand
+best_combination = best_hand(hand, table)
+
+# Display the hand, table, and best combination
+hand.display()
+table.display()
+best_combination["combination"].display()
 ```
 
 
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-
-## Appendix
-
-Any additional information goes here
 
 
 ## Acknowledgements

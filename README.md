@@ -24,8 +24,7 @@ This is a poker website project that allows you to sign up, manage your money an
 
 ## Demo
 
-[![Demo Video](https://img.youtube.com/vi/_cNUt9rsFgo/0.jpg)](https://youtube.com/embed/_cNUt9rsFgo)
-
+[![Demo Video](https://img.youtube.com/vi/we6eHuhSh-k/0.jpg)](https://youtube.com/embed/we6eHuhSh-k)
 
 ## Run Locally
 

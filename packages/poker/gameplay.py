@@ -14,6 +14,3 @@ def deal_table(deck: cards.Deck, table: cards.Table):
     table.deal_turn(deck)
     deck.deal()
     table.deal_river(deck)
-
-
-# TODO: Add betting between rounds

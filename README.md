@@ -184,7 +184,10 @@ best_combination["combination"].display()
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Registration Page](static/images/ss-register.png)
+![User Dashboard](static/images/ss-dashboard.png)
+![Gameplay](static/images/ss-gameplay.png)
+![Money management](static/images/ss-money_management.png)
 
 
 ## Acknowledgements
